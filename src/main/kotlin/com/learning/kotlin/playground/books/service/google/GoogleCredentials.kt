@@ -27,7 +27,7 @@ class GoogleCredentials {
     private val CLIENT_SECRET_DIR = "client_secret.json"
 
     @Throws(IOException::class)
-    public fun getCredentials(HTTP_TRANSPORT: NetHttpTransport): Credential {
+    fun getCredentials(HTTP_TRANSPORT: NetHttpTransport): Credential {
         // Load client secrets.
         val `in` = GoogleCredentials::class.java!!.getClassLoader().getResourceAsStream(CLIENT_SECRET_DIR)
 
