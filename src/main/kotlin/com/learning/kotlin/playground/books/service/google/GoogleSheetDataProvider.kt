@@ -36,7 +36,7 @@ class GoogleSheetDataProvider(
         var service: Sheets = Sheets.Builder(HTTP_TRANSPORT, jsonFactoryInstance, credentials.getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(applicationName)
                 .build()
-        
+
         var response: ValueRange = service.spreadsheets().values()
                 .get(googleSheetId, range)
                 .execute()
