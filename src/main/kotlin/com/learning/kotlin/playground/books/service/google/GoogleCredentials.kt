@@ -16,31 +16,25 @@ import java.io.InputStreamReader
 
 @Component
 class GoogleCredentials {
-    private val JSON_FACTORY = JacksonFactory.getDefaultInstance()
-    private val CREDENTIALS_FOLDER = "credentials" // Directory to store user credentials.
-
-    /**
-     * Global instance of the scopes required by this quickstart.
-     * If modifying these scopes, delete your previously saved credentials/ folder.
-     */
-    private val SCOPES = listOf(SheetsScopes.SPREADSHEETS_READONLY)
-    private val CLIENT_SECRET_DIR = "client_secret.json"
+    private val jacksonFactory = JacksonFactory.getDefaultInstance()
+    private val credentialsDir = "credentials" // Directory to store user credentials.
+    private val scopes = listOf(SheetsScopes.SPREADSHEETS_READONLY)
+    private val clientSecretDir = "client_secret.json"
 
     @Throws(IOException::class)
     fun getCredentials(HTTP_TRANSPORT: NetHttpTransport): Credential {
-        // Load client secrets.
-        val `in` = GoogleCredentials::class.java!!.getClassLoader().getResourceAsStream(CLIENT_SECRET_DIR)
+        //TODO: check options
+        val input = GoogleCredentials::class.java!!.getClassLoader().getResourceAsStream(clientSecretDir)
 
-        val clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, InputStreamReader(`in`!!))
+        val clientSecrets = GoogleClientSecrets.load(jacksonFactory, InputStreamReader(input!!))
 
-        // Build flow and trigger user authorization request.
-        val flow = GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(FileDataStoreFactory(File(CREDENTIALS_FOLDER)))
+        val googleAuthorizationCodeFlow = GoogleAuthorizationCodeFlow.Builder(
+                HTTP_TRANSPORT, jacksonFactory, clientSecrets, scopes)
+                .setDataStoreFactory(FileDataStoreFactory(File(credentialsDir)))
                 .setAccessType("offline")
                 .build()
 
         val localServerReceiver = LocalServerReceiver.Builder().setPort(8080).build()
-        return AuthorizationCodeInstalledApp(flow, localServerReceiver).authorize("user")
+        return AuthorizationCodeInstalledApp(googleAuthorizationCodeFlow, localServerReceiver).authorize("user")
     }
 }
